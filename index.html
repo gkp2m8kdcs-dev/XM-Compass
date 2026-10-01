@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>MTAtlas — Personal Finance, Made Calm</title>
+<meta name="description" content="MTAtlas is a private, offline-first personal finance companion for iPhone. Track expenses, plan budgets, save toward goals, and read clear insights — without giving up your data." />
+<meta name="theme-color" content="#0B0F1A" />
+<style>
+    :root {
+        --bg: #0B0F1A;
+        --bg-elev: #121826;
+        --bg-soft: #1A2236;
+        --line: rgba(255,255,255,0.08);
+        --text: #F2F4F8;
+        --muted: #9AA3B2;
+        --accent: #4F8CFF;
+        --accent-2: #7BD4FF;
+        --good: #4FD1A1;
+        --warn: #FFB454;
+        --bad: #FF6B7A;
+        --radius: 16px;
+        --radius-lg: 24px;
+        --shadow: 0 24px 60px rgba(0,0,0,0.45);
+        --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+        background: radial-gradient(1200px 800px at 80% -10%, rgba(79,140,255,0.18), transparent 60%),
+                    radial-gradient(900px 700px at -10% 30%, rgba(123,212,255,0.10), transparent 60%),
+                    var(--bg);
+        color: var(--text);
+        font-family: var(--font);
+        line-height: 1.55;
+        -webkit-font-smoothing: antialiased;
+        text-rendering: optimizeLegibility;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    .container {
+        width: 100%;
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 0 24px;
+    }
+
+    /* Header */
+    header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        backdrop-filter: saturate(140%) blur(14px);
+        -webkit-backdrop-filter: saturate(140%) blur(14px);
+        background: rgba(11,15,26,0.7);
+        border-bottom: 1px solid var(--line);
+    }
+    .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 64px;
+    }
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        font-size: 18px;
+    }
+    .brand .dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 4px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        box-shadow: 0 0 24px rgba(79,140,255,0.6);
+    }
+    nav ul {
+        list-style: none;
+        display: flex;
+        gap: 28px;
+        margin: 0;
+        padding: 0;
+        font-size: 14px;
+        color: var(--muted);
+    }
+    nav ul a:hover { color: var(--text); }
+    .nav-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 16px;
+        border-radius: 12px;
+        background: var(--text);
+        color: #0B0F1A;
+        font-weight: 600;
+        font-size: 14px;
+        transition: transform .15s ease;
+    }
+    .nav-cta:hover { transform: translateY(-1px); }
+
+    @media (max-width: 720px) {
+        nav ul { display: none; }
+    }
+
+    /* Hero */
+    .hero {
+        padding: 96px 0 72px;
+        position: relative;
+    }
+    .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 12px;
+        border-radius: 999px;
+        background: rgba(79,140,255,0.12);
+        color: var(--accent-2);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+        border: 1px solid rgba(79,140,255,0.25);
+    }
+    .eyebrow .pulse {
+        width: 6px; height: 6px; border-radius: 50%;
+        background: var(--accent-2);
+        box-shadow: 0 0 12px var(--accent-2);
+    }
+    h1 {
+        font-size: clamp(40px, 6vw, 68px);
+        line-height: 1.05;
+        margin: 20px 0 16px;
+        letter-spacing: -0.02em;
+        font-weight: 700;
+    }
+    h1 .grad {
+        background: linear-gradient(120deg, #ffffff 0%, var(--accent-2) 60%, var(--accent) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .lede {
+        max-width: 640px;
+        font-size: clamp(16px, 1.6vw, 19px);
+        color: var(--muted);
+        margin: 0 0 32px;
+    }
+    .cta-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+    }
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 14px 20px;
+        border-radius: 14px;
+        font-weight: 600;
+        font-size: 15px;
+        border: 1px solid transparent;
+        transition: transform .15s ease, background .15s ease;
+    }
+    .btn-primary {
+        background: var(--accent);
+        color: white;
+        box-shadow: 0 12px 30px rgba(79,140,255,0.35);
+    }
+    .btn-primary:hover { transform: translateY(-1px); background: #5f97ff; }
+    .btn-ghost {
+        background: transparent;
+        color: var(--text);
+        border-color: var(--line);
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.04); }
+
+    .hero-grid {
+        display: grid;
+        grid-template-columns: 1.05fr 1fr;
+        gap: 56px;
+        align-items: center;
+    }
+    @media (max-width: 900px) {
+        .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    }
+
+    /* Mock device card */
+    .device {
+        position: relative;
+        background: linear-gradient(180deg, #131A2C 0%, #0E1424 100%);
+        border: 1px solid var(--line);
+        border-radius: var(--radius-lg);
+        padding: 22px;
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+    .device::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(400px 200px at 70% 0%, rgba(79,140,255,0.25), transparent 60%);
+        pointer-events: none;
+    }
+    .device-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 16px;
+    }
+    .device-title { font-size: 13px; color: var(--muted); letter-spacing: .4px; text-transform: uppercase; }
+    .device-tag {
+        font-size: 11px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        background: rgba(79,211,161,0.14);
+        color: var(--good);
+        border: 1px solid rgba(79,211,161,0.3);
+    }
+
+    .stat-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+    .stat {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px;
+    }
+    .stat .label { font-size: 11px; color: var(--muted); margin-bottom: 6px; letter-spacing: .3px; text-transform: uppercase; }
+    .stat .value { font-size: 18px; font-weight: 700; }
+    .stat .value .unit { font-size: 12px; color: var(--muted); margin-left: 4px; }
+
+    .donut-wrap {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        align-items: center;
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px;
+        margin-bottom: 16px;
+    }
+    .donut {
+        position: relative;
+        width: 120px;
+        height: 120px;
+    }
+    .donut svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+    .donut-center {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        color: var(--muted);
+    }
+    .donut-center strong { color: var(--text); font-size: 16px; }
+    .legend { display: flex; flex-direction: column; gap: 8px; font-size: 12px; }
+    .legend .row { display: flex; align-items: center; gap: 8px; }
+    .legend .swatch { width: 10px; height: 10px; border-radius: 3px; }
+    .legend .name { color: var(--text); flex: 1; }
+    .legend .pct { color: var(--muted); }
+
+    .bars {
+        background: rgba(255,255,255,0.03);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px;
+    }
+    .bars .head {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 12px;
+    }
+    .bars .head .title { font-size: 13px; font-weight: 600; }
+    .bars .head .sub { font-size: 11px; color: var(--muted); }
+    .bars svg { width: 100%; height: 70px; }
+
+    /* Sections */
+    section { padding: 80px 0; }
+    .section-head {
+        max-width: 720px;
+        margin: 0 auto 48px;
+        text-align: center;
+    }
+    .section-head h2 {
+        font-size: clamp(28px, 3.4vw, 40px);
+        margin: 0 0 12px;
+        letter-spacing: -0.02em;
+    }
+    .section-head p {
+        color: var(--muted);
+        font-size: 17px;
+        margin: 0;
+    }
+
+    .features {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 18px;
+    }
+    @media (max-width: 900px) { .features { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 600px) { .features { grid-template-columns: 1fr; } }
+
+    .feature {
+        background: var(--bg-elev);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 24px;
+        transition: transform .2s ease, border-color .2s ease;
+    }
+    .feature:hover { transform: translateY(-3px); border-color: rgba(79,140,255,0.35); }
+    .feature .icon {
+        width: 44px; height: 44px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, rgba(79,140,255,0.2), rgba(123,212,255,0.2));
+        border: 1px solid rgba(79,140,255,0.25);
+        display: flex; align-items: center; justify-content: center;
+        margin-bottom: 16px;
+        color: var(--accent-2);
+        font-size: 20px;
+    }
+    .feature h3 {
+        margin: 0 0 8px;
+        font-size: 18px;
+        letter-spacing: -0.01em;
+    }
+    .feature p { color: var(--muted); margin: 0; font-size: 14.5px; }
+
+    /* Privacy strip */
+    .privacy-strip {
+        background: linear-gradient(180deg, rgba(79,140,255,0.08), transparent);
+        border-top: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+    }
+    .privacy-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 48px;
+        align-items: center;
+    }
+    @media (max-width: 800px) { .privacy-grid { grid-template-columns: 1fr; } }
+    .privacy-list { list-style: none; padding: 0; margin: 20px 0 0; display: grid; gap: 14px; }
+    .privacy-list li { display: flex; gap: 12px; align-items: flex-start; }
+    .privacy-list .check {
+        flex: 0 0 auto;
+        width: 22px; height: 22px;
+        border-radius: 50%;
+        background: rgba(79,211,161,0.15);
+        color: var(--good);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 13px;
+        border: 1px solid rgba(79,211,161,0.3);
+    }
+    .privacy-list strong { display: block; margin-bottom: 2px; }
+    .privacy-list span { color: var(--muted); font-size: 14.5px; }
+
+    /* Specs */
+    .specs {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
+        text-align: center;
+    }
+    @media (max-width: 800px) { .specs { grid-template-columns: 1fr 1fr; } }
+    .spec {
+        background: var(--bg-elev);
+        border: 1px solid var(--line);
+        border-radius: var(--radius);
+        padding: 24px 16px;
+    }
+    .spec .num {
+        font-size: 28px;
+        font-weight: 700;
+        background: linear-gradient(120deg, var(--text), var(--accent-2));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .spec .lbl { color: var(--muted); font-size: 13px; margin-top: 4px; }
+
+    /* Footer */
+    footer {
+        border-top: 1px solid var(--line);
+        padding: 40px 0 56px;
+        color: var(--muted);
+        font-size: 14px;
+    }
+    .footer-grid {
+        display: grid;
+        grid-template-columns: 1.4fr 1fr 1fr 1fr;
+        gap: 32px;
+    }
+    @media (max-width: 700px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+    footer h4 { color: var(--text); font-size: 13px; text-transform: uppercase; letter-spacing: .4px; margin: 0 0 12px; }
+    footer ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+    footer ul a:hover { color: var(--text); }
+    .legal {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid var(--line);
+        font-size: 13px;
+    }
+</style>
+</head>
+<body>
+
+<header>
+    <div class="container nav">
+        <a class="brand" href="index.html">
+            <span class="dot"></span>
+            <span>MTAtlas</span>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#privacy">Privacy</a></li>
+                <li><a href="support.html">Support</a></li>
+                <li><a href="terms.html">Terms</a></li>
+            </ul>
+        </nav>
+        <a class="nav-cta" href="support.html">Get the App →</a>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="container hero-grid">
+        <div>
+            <span class="eyebrow"><span class="pulse"></span> Offline-first · iPhone · iOS 16+</span>
+            <h1>Your money,<br /><span class="grad">finally calm.</span></h1>
+            <p class="lede">
+                MTAtlas is a personal finance companion for people who want their money to feel calm, not chaotic. Track daily expenses, plan monthly envelopes, save toward meaningful goals — and keep every byte of your data on your device.
+            </p>
+            <div class="cta-row">
+                <a class="btn btn-primary" href="support.html">Download on the App Store</a>
+                <a class="btn btn-ghost" href="#features">Explore features</a>
+            </div>
+            <p style="margin-top:18px; font-size:13px; color:var(--muted);">
+                No bank linking. No account required. No server sync.
+            </p>
+        </div>
+
+        <!-- Mock dashboard preview -->
+        <div class="device" aria-hidden="true">
+            <div class="device-head">
+                <span class="device-title">Dashboard</span>
+                <span class="device-tag">Live</span>
+            </div>
+
+            <div class="stat-row">
+                <div class="stat">
+                    <div class="label">Net</div>
+                    <div class="value">$12,840<span class="unit">.56</span></div>
+                </div>
+                <div class="stat">
+                    <div class="label">Income</div>
+                    <div class="value" style="color:var(--good)">+$4,200</div>
+                </div>
+                <div class="stat">
+                    <div class="label">Spending</div>
+                    <div class="value" style="color:var(--bad)">−$2,318</div>
+                </div>
+            </div>
+
+            <div class="donut-wrap">
+                <div class="donut">
+                    <svg viewBox="0 0 36 36">
+                        <circle cx="18" cy="18" r="15" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="3"></circle>
+                        <circle cx="18" cy="18" r="15" fill="none" stroke="#4F8CFF" stroke-width="3" stroke-dasharray="42 100" stroke-linecap="round"></circle>
+                        <circle cx="18" cy="18" r="15" fill="none" stroke="#7BD4FF" stroke-width="3" stroke-dasharray="22 100" stroke-dashoffset="-42" stroke-linecap="round"></circle>
+                        <circle cx="18" cy="18" r="15" fill="none" stroke="#4FD1A1" stroke-width="3" stroke-dasharray="14 100" stroke-dashoffset="-64" stroke-linecap="round"></circle>
+                        <circle cx="18" cy="18" r="15" fill="none" stroke="#FFB454" stroke-width="3" stroke-dasharray="10 100" stroke-dashoffset="-78" stroke-linecap="round"></circle>
+                    </svg>
+                    <div class="donut-center">
+                        <span>This week</span>
+                        <strong>$2,318</strong>
+                    </div>
+                </div>
+                <div class="legend">
+                    <div class="row"><span class="swatch" style="background:#4F8CFF"></span><span class="name">Food</span><span class="pct">42%</span></div>
+                    <div class="row"><span class="swatch" style="background:#7BD4FF"></span><span class="name">Transit</span><span class="pct">22%</span></div>
+                    <div class="row"><span class="swatch" style="background:#4FD1A1"></span><span class="name">Bills</span><span class="pct">14%</span></div>
+                    <div class="row"><span class="swatch" style="background:#FFB454"></span><span class="name">Other</span><span class="pct">10%</span></div>
+                </div>
+            </div>
+
+            <div class="bars">
+                <div class="head">
+                    <span class="title">Cash flow</span>
+                    <span class="sub">Last 7 days</span>
+                </div>
+                <svg viewBox="0 0 200 70" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="barG" x1="0" x2="0" y1="0" y2="1">
+                            <stop offset="0%" stop-color="#4F8CFF" stop-opacity="0.9"/>
+                            <stop offset="100%" stop-color="#4F8CFF" stop-opacity="0.25"/>
+                        </linearGradient>
+                    </defs>
+                    <g>
+                        <rect x="6"   y="42" width="20" height="28" rx="3" fill="url(#barG)"/>
+                        <rect x="34"  y="30" width="20" height="40" rx="3" fill="url(#barG)"/>
+                        <rect x="62"  y="20" width="20" height="50" rx="3" fill="url(#barG)"/>
+                        <rect x="90"  y="34" width="20" height="36" rx="3" fill="url(#barG)"/>
+                        <rect x="118" y="14" width="20" height="56" rx="3" fill="url(#barG)"/>
+                        <rect x="146" y="26" width="20" height="44" rx="3" fill="url(#barG)"/>
+                        <rect x="174" y="38" width="20" height="32" rx="3" fill="url(#barG)"/>
+                    </g>
+                </svg>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="features">
+    <div class="container">
+        <div class="section-head">
+            <h2>Designed for everyday money</h2>
+            <p>Six surfaces, one calm app. MTAtlas focuses on what you actually do with money each week — not on dashboards you'll never open again.</p>
+        </div>
+
+        <div class="features">
+            <div class="feature">
+                <div class="icon">＋</div>
+                <h3>Record in seconds</h3>
+                <p>Income, expense, or transfer — pick a category, attach up to six receipt photos from the camera or library, add notes, location, and tags. Save.</p>
+            </div>
+            <div class="feature">
+                <div class="icon">◐</div>
+                <h3>Envelope budgets</h3>
+                <p>Set a monthly limit per category. Watch a burndown curve compare your actual pace to an ideal line, and get an alert when you cross your own threshold.</p>
+            </div>
+            <div class="feature">
+                <div class="icon">◎</div>
+                <h3>Goals that move</h3>
+                <p>Pick a name, a target, and a date. MTAtlas computes how much you must save per day. Milestones appear automatically; progress rings update the moment you contribute.</p>
+            </div>
+            <div class="feature">
+                <div class="icon">▦</div>
+                <h3>Accounts that respect transfers</h3>
+                <p>Cash, checking, savings, and credit cards with running balances that respect transfers in and out — no double counting.</p>
+            </div>
+            <div class="feature">
+                <div class="icon">⌗</div>
+                <h3>Analytics that go deeper</h3>
+                <p>Cash-flow trends, top merchants, category breakdowns, and a heatmap of your daily activity — all drawn by hand in SwiftUI Canvas.</p>
+            </div>
+            <div class="feature">
+                <div class="icon">⇩</div>
+                <h3>Export in two taps</h3>
+                <p>CSV or JSON. Wipe everything with a single confirmation. You always have an exit ramp.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="privacy-strip" id="privacy">
+    <div class="container privacy-grid">
+        <div>
+            <span class="eyebrow"><span class="pulse"></span> Privacy by design</span>
+            <h2 style="font-size:clamp(28px,3.4vw,40px); margin:16px 0 12px; letter-spacing:-0.02em;">Your data never leaves your iPhone.</h2>
+            <p style="color:var(--muted); font-size:17px; margin:0;">
+                MTAtlas is offline-first by design. No bank linking, no account, no cloud sync. Every transaction, receipt photo, budget, and goal lives on your device — and only on your device.
+            </p>
+        </div>
+        <ul class="privacy-list">
+            <li>
+                <span class="check">✓</span>
+                <div><strong>No bank connections.</strong><span>MTAtlas never asks for, stores, or transmits your bank credentials.</span></div>
+            </li>
+            <li>
+                <span class="check">✓</span>
+                <div><strong>No account required.</strong><span>Open the app and start tracking. Nothing to sign up for, nothing to log into.</span></div>
+            </li>
+            <li>
+                <span class="check">✓</span>
+                <div><strong>No server sync.</strong><span>All records, attachments, and preferences are stored locally on your iPhone.</span></div>
+            </li>
+            <li>
+                <span class="check">✓</span>
+                <div><strong>Export &amp; erase anytime.</strong><span>Take your data as CSV or JSON. Wipe everything with a single confirmation.</span></div>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<section>
+    <div class="container">
+        <div class="section-head">
+            <h2>Built with restraint</h2>
+            <p>The numbers that matter, the details that don't get in the way.</p>
+        </div>
+        <div class="specs">
+            <div class="spec"><div class="num">iOS 16+</div><div class="lbl">iPhone only</div></div>
+            <div class="spec"><div class="num">0 KB</div><div class="lbl">Sent to a server</div></div>
+            <div class="spec"><div class="num">100%</div><div class="lbl">Local storage</div></div>
+            <div class="spec"><div class="num">Dark-first</div><div class="lbl">Native design</div></div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <a class="brand" href="index.html"><span class="dot"></span><span>MTAtlas</span></a>
+                <p style="margin-top:12px; max-width:320px;">A personal finance companion for people who want their money to feel calm, not chaotic.</p>
+            </div>
+            <div>
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#privacy">Privacy</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="support.html">Help &amp; FAQ</a></li>
+                    <li><a href="support.html#contact">Contact</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="privacy.html">Privacy Policy</a></li>
+                    <li><a href="terms.html">Terms of Use</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="legal">
+            <span>© 2026 MTAtlas. All rights reserved.</span>
+            <span>Made with care for iPhone.</span>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
